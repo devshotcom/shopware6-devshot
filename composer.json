@@ -1,0 +1,26 @@
+{
+  "name": "devshot/shopware6-devshot",
+  "description": "DevShot Workspace Connector für anonymisierte Shopware Wartung.",
+  "type": "shopware-platform-plugin",
+  "license": "proprietary",
+  "require": {
+    "shopware/core": "^6.6",
+    "symfony/http-client": "^7.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Devshot\\Connector\\": "src/"
+    }
+  },
+  "extra": {
+    "shopware-plugin-class": "Devshot\\Connector\\DevshotConnector",
+    "label": {
+      "de-DE": "DevShot Connector",
+      "en-GB": "DevShot Connector"
+    },
+    "description": {
+      "de-DE": "Synchronisiert anonymisierte Datenbank-Backups und Projektdateien ohne Media in den DevShot Workspace.",
+      "en-GB": "Synchronizes anonymized database backups and project files without media into the DevShot Workspace."
+    }
+  }
+}
