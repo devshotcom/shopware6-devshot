@@ -7,6 +7,9 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class AiWorkspaceClient
 {
+    private const UPLOAD_HOST = 'console.devshot.com';
+    private const UPLOAD_PATH = '/api/public/studio/shopware-import';
+
     public function __construct(private readonly HttpClientInterface $httpClient)
     {
     }
@@ -17,6 +20,7 @@ class AiWorkspaceClient
      */
     public function send(string $endpoint, string $token, array $manifest, string $databaseBackupPath, string $projectArchivePath): array
     {
+        self::assertAllowedEndpoint($endpoint);
         $databaseHandle = fopen($databaseBackupPath, 'rb');
         $archiveHandle = fopen($projectArchivePath, 'rb');
 
@@ -59,6 +63,22 @@ class AiWorkspaceClient
             if (is_resource($archiveHandle)) {
                 fclose($archiveHandle);
             }
+        }
+    }
+
+    public static function assertAllowedEndpoint(string $endpoint): void
+    {
+        $parts = parse_url($endpoint);
+        if (!is_array($parts)
+            || ($parts['scheme'] ?? '') !== 'https'
+            || strtolower((string) ($parts['host'] ?? '')) !== self::UPLOAD_HOST
+            || ($parts['path'] ?? '') !== self::UPLOAD_PATH
+            || isset($parts['user'])
+            || isset($parts['pass'])
+            || isset($parts['query'])
+            || isset($parts['fragment'])
+            || (isset($parts['port']) && (int) $parts['port'] !== 443)) {
+            throw new RuntimeException('Only the pinned DevShot HTTPS upload endpoint is allowed.');
         }
     }
 }

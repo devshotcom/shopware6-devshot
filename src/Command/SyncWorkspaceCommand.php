@@ -47,8 +47,6 @@ class SyncWorkspaceCommand extends Command
         $result = $this->workspaceSyncService->sync($endpoint, $token);
 
         $io->success(sprintf('Workspace Sync "%s" wurde übertragen.', $result['syncId']));
-        $io->writeln(sprintf('DB Backup: %s', $result['databaseBackupPath']));
-        $io->writeln(sprintf('Projektarchiv: %s', $result['projectArchivePath']));
 
         if (is_array($result['workspaceResponse']) && isset($result['workspaceResponse']['testserverUrl'])) {
             $io->writeln(sprintf('Lokaler Testserver: %s', $result['workspaceResponse']['testserverUrl']));

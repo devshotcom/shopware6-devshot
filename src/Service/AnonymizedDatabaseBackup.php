@@ -32,14 +32,14 @@ class AnonymizedDatabaseBackup
 
     public function create(string $targetDirectory): string
     {
-        if (!is_dir($targetDirectory) && !mkdir($targetDirectory, 0770, true) && !is_dir($targetDirectory)) {
-            throw new RuntimeException(sprintf('Backup directory "%s" could not be created.', $targetDirectory));
+        if (!is_dir($targetDirectory)) {
+            throw new RuntimeException(sprintf('Backup directory "%s" does not exist.', $targetDirectory));
         }
 
-        $backupPath = $targetDirectory . '/database-anonymized.jsonl';
-        $handle = fopen($backupPath, 'wb');
+        $temporaryBackupPath = $targetDirectory . '/database-anonymized.jsonl';
+        $handle = fopen($temporaryBackupPath, 'wb');
         if ($handle === false) {
-            throw new RuntimeException(sprintf('Backup file "%s" could not be opened.', $backupPath));
+            throw new RuntimeException(sprintf('Backup file "%s" could not be opened.', $temporaryBackupPath));
         }
 
         fwrite($handle, json_encode([
@@ -65,7 +65,7 @@ class AnonymizedDatabaseBackup
         }
 
         fclose($handle);
-        return $backupPath;
+        return $temporaryBackupPath;
     }
 
     private function isSafeTable(string $tableName): bool

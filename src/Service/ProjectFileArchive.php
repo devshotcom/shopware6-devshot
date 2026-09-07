@@ -36,8 +36,8 @@ class ProjectFileArchive
         if (!class_exists(ZipArchive::class)) {
             throw new RuntimeException('The PHP zip extension is required for the Shopware file archive.');
         }
-        if (!is_dir($targetDirectory) && !mkdir($targetDirectory, 0770, true) && !is_dir($targetDirectory)) {
-            throw new RuntimeException(sprintf('Archive directory "%s" could not be created.', $targetDirectory));
+        if (!is_dir($targetDirectory)) {
+            throw new RuntimeException(sprintf('Archive directory "%s" does not exist.', $targetDirectory));
         }
 
         $archivePath = $targetDirectory . '/project-without-media.zip';

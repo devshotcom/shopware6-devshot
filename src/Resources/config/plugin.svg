@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title">
+  <title id="title">DevShot</title>
+  <rect width="512" height="512" rx="112" fill="#121212"/>
+  <path fill="#f97316" d="M120 112h130c94 0 154 55 154 144s-60 144-154 144H120V112Zm126 220c47 0 76-29 76-76s-29-76-76-76h-44v152h44Z"/>
+  <circle cx="391" cy="121" r="35" fill="#fff"/>
+</svg>

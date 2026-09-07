@@ -1,0 +1,42 @@
+{
+  "devshot-pairing": {
+    "general": {
+      "title": "DevShot connections",
+      "description": "Secure DevShot Studio connections with explicit approval"
+    },
+    "actions": {
+      "refresh": "Refresh",
+      "createInvitation": "Create pairing code",
+      "reject": "Reject",
+      "connect": "Approve connection",
+      "approveOnce": "Approve once",
+      "revoke": "Revoke connection"
+    },
+    "cards": {
+      "invitation": "New pairing code",
+      "operations": "Access requests awaiting approval",
+      "pairings": "New connection requests",
+      "connections": "Existing connections"
+    },
+    "copy": {
+      "invitation": "Give this one-time code to the DevShot agent. It expires after ten minutes and is stored only as a SHA-256 hash.",
+      "expires": "Valid until:",
+      "workspaceSync": "Synchronize anonymized workspace"
+    },
+    "labels": {
+      "fingerprint": "Agent",
+      "nonce": "One-time nonce",
+      "expires": "Valid until"
+    },
+    "empty": {
+      "operations": "No access request is waiting for approval.",
+      "pairings": "No new connection request.",
+      "connections": "No persistent connection yet."
+    },
+    "messages": {
+      "loadFailed": "Connection data could not be loaded.",
+      "invitationFailed": "The pairing code could not be created.",
+      "decisionFailed": "The decision could not be saved."
+    }
+  }
+}

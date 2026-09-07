@@ -1,0 +1,79 @@
+{% block devshot_pairing_page %}
+<sw-page class="devshot-pairing-page">
+    <template #smart-bar-header>
+        <h2>{{ $tc('devshot-pairing.general.title') }}</h2>
+    </template>
+
+    <template #smart-bar-actions>
+        <sw-button :disabled="loading" @click="load">
+            {{ $tc('devshot-pairing.actions.refresh') }}
+        </sw-button>
+        <sw-button variant="primary" :disabled="loading" @click="createInvitation">
+            {{ $tc('devshot-pairing.actions.createInvitation') }}
+        </sw-button>
+    </template>
+
+    <template #content>
+        <sw-card-view>
+            <sw-loader v-if="loading" />
+            <sw-alert v-if="error" variant="error">{{ error }}</sw-alert>
+
+            <sw-card v-if="invitation" :title="$tc('devshot-pairing.cards.invitation')">
+                <p>{{ $tc('devshot-pairing.copy.invitation') }}</p>
+                <code class="devshot-pairing-page__code">{{ invitation.pairingCode }}</code>
+                <p>{{ $tc('devshot-pairing.copy.expires') }} {{ invitation.expiresAt }}</p>
+            </sw-card>
+
+            <sw-card :title="$tc('devshot-pairing.cards.operations')">
+                <p v-if="pendingOperations.length === 0" class="devshot-pairing-page__empty">
+                    {{ $tc('devshot-pairing.empty.operations') }}
+                </p>
+                <article
+                    v-for="operation in pendingOperations"
+                    :key="operation.operationId"
+                    class="devshot-pairing-page__request"
+                    :class="{ 'is-highlighted': highlighted(operation.operationId, 'operation') }"
+                >
+                    <h3>{{ $tc('devshot-pairing.copy.workspaceSync') }}</h3>
+                    <p>{{ operation.agentName }}</p>
+                    <dl>
+                        <dt>{{ $tc('devshot-pairing.labels.fingerprint') }}</dt><dd><code>{{ operation.displayFingerprint }}</code></dd>
+                        <dt>{{ $tc('devshot-pairing.labels.nonce') }}</dt><dd><code>{{ operation.approvalNonce }}</code></dd>
+                        <dt>{{ $tc('devshot-pairing.labels.expires') }}</dt><dd>{{ operation.expiresAt }}</dd>
+                    </dl>
+                    <sw-button variant="danger" size="small" @click="decideOperation(operation.operationId, 'reject')">{{ $tc('devshot-pairing.actions.reject') }}</sw-button>
+                    <sw-button variant="primary" size="small" @click="decideOperation(operation.operationId, 'approve')">{{ $tc('devshot-pairing.actions.approveOnce') }}</sw-button>
+                </article>
+            </sw-card>
+
+            <sw-card :title="$tc('devshot-pairing.cards.pairings')">
+                <p v-if="pendingPairings.length === 0" class="devshot-pairing-page__empty">
+                    {{ $tc('devshot-pairing.empty.pairings') }}
+                </p>
+                <article
+                    v-for="pairing in pendingPairings"
+                    :key="pairing.requestId"
+                    class="devshot-pairing-page__request"
+                    :class="{ 'is-highlighted': highlighted(pairing.requestId, 'pairing') }"
+                >
+                    <h3>{{ pairing.agentName }}</h3>
+                    <p><code>{{ pairing.displayFingerprint }}</code></p>
+                    <sw-button variant="danger" size="small" @click="decidePairing(pairing.requestId, 'reject')">{{ $tc('devshot-pairing.actions.reject') }}</sw-button>
+                    <sw-button variant="primary" size="small" @click="decidePairing(pairing.requestId, 'approve')">{{ $tc('devshot-pairing.actions.connect') }}</sw-button>
+                </article>
+            </sw-card>
+
+            <sw-card :title="$tc('devshot-pairing.cards.connections')">
+                <p v-if="connectedPairings.length === 0" class="devshot-pairing-page__empty">
+                    {{ $tc('devshot-pairing.empty.connections') }}
+                </p>
+                <article v-for="pairing in connectedPairings" :key="pairing.requestId" class="devshot-pairing-page__request">
+                    <h3>{{ pairing.agentName }}</h3>
+                    <p><code>{{ pairing.displayFingerprint }}</code></p>
+                    <sw-button variant="danger" size="small" @click="decidePairing(pairing.requestId, 'revoke')">{{ $tc('devshot-pairing.actions.revoke') }}</sw-button>
+                </article>
+            </sw-card>
+        </sw-card-view>
+    </template>
+</sw-page>
+{% endblock %}

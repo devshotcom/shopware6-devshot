@@ -1,0 +1,44 @@
+.devshot-pairing-page {
+    &__empty {
+        padding: 20px;
+        margin: 0;
+        color: #52667a;
+        text-align: center;
+    }
+
+    &__code {
+        display: block;
+        padding: 16px;
+        margin: 12px 0;
+        overflow-wrap: anywhere;
+        background: #f0f2f5;
+        border: 1px solid #d1d9e0;
+    }
+
+    &__request {
+        padding: 20px;
+        margin-bottom: 16px;
+        border: 1px solid #d1d9e0;
+
+        &.is-highlighted {
+            border: 2px solid #6d5dfc;
+            box-shadow: 0 0 0 4px rgba(109, 93, 252, 0.12);
+        }
+
+        dl {
+            display: grid;
+            grid-template-columns: 120px minmax(0, 1fr);
+            gap: 8px 16px;
+            margin: 16px 0;
+        }
+
+        dd {
+            margin: 0;
+            overflow-wrap: anywhere;
+        }
+
+        .sw-button + .sw-button {
+            margin-left: 8px;
+        }
+    }
+}

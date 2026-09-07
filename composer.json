@@ -1,11 +1,23 @@
 {
   "name": "devshot/shopware6-devshot",
   "description": "DevShot Workspace Connector für anonymisierte Shopware Wartung.",
+  "version": "0.1.0",
   "type": "shopware-platform-plugin",
   "license": "proprietary",
+  "authors": [
+    {
+      "name": "DevShot",
+      "homepage": "https://devshot.com"
+    }
+  ],
   "require": {
+    "ext-sodium": "*",
     "shopware/core": "^6.6",
+    "shopware/storefront": "^6.6",
     "symfony/http-client": "^7.0"
+  },
+  "scripts": {
+    "test": "php tests/run.php"
   },
   "autoload": {
     "psr-4": {
@@ -14,13 +26,23 @@
   },
   "extra": {
     "shopware-plugin-class": "Devshot\\Connector\\DevshotConnector",
+    "plugin-icon": "src/Resources/config/plugin.png",
+    "copyright": "(c) DevShot",
     "label": {
       "de-DE": "DevShot Connector",
       "en-GB": "DevShot Connector"
     },
     "description": {
-      "de-DE": "Synchronisiert anonymisierte Datenbank-Backups und Projektdateien ohne Media in den DevShot Workspace.",
-      "en-GB": "Synchronizes anonymized database backups and project files without media into the DevShot Workspace."
+      "de-DE": "Verbindet Shopware sicher mit DevShot, fordert jede Workspace-Synchronisation per einmaliger Nonce zur Freigabe an und überträgt nur anonymisierte Daten ohne Media oder Secrets.",
+      "en-GB": "Securely connects Shopware to DevShot, requires explicit approval with a one-time nonce for every workspace sync, and transfers only anonymized data without media or secrets."
+    },
+    "manufacturerLink": {
+      "de-DE": "https://devshot.com",
+      "en-GB": "https://devshot.com"
+    },
+    "supportLink": {
+      "de-DE": "https://github.com/devshotcom/shopware6-devshot/issues",
+      "en-GB": "https://github.com/devshotcom/shopware6-devshot/issues"
     }
   }
 }

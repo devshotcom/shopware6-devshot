@@ -14,7 +14,7 @@
             <argument type="service" id="Devshot\Connector\Service\AnonymizedDatabaseBackup"/>
             <argument type="service" id="Devshot\Connector\Service\ProjectFileArchive"/>
             <argument type="service" id="Devshot\Connector\Service\AiWorkspaceClient"/>
-            <argument>%kernel.project_dir%</argument>
+            <argument type="service" id="Devshot\Connector\Service\TemporaryWorkspace"/>
         </service>
 
         <service id="Devshot\Connector\Command\SyncWorkspaceCommand">
@@ -24,5 +24,21 @@
 
         <service id="Devshot\Connector\Service\AnonymizedDatabaseBackup"/>
         <service id="Devshot\Connector\Service\AiWorkspaceClient"/>
+        <service id="Devshot\Connector\Service\TemporaryWorkspace"/>
+
+        <service id="Devshot\Connector\Service\PairingService">
+            <argument type="service" id="Doctrine\DBAL\Connection"/>
+        </service>
+
+        <service id="Devshot\Connector\Controller\PairingPublicController" public="true">
+            <argument type="service" id="Devshot\Connector\Service\PairingService"/>
+            <argument type="service" id="Devshot\Connector\Service\WorkspaceSyncService"/>
+            <tag name="controller.service_arguments"/>
+        </service>
+
+        <service id="Devshot\Connector\Controller\PairingAdminController" public="true">
+            <argument type="service" id="Devshot\Connector\Service\PairingService"/>
+            <tag name="controller.service_arguments"/>
+        </service>
     </services>
 </container>

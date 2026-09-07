@@ -1,0 +1,42 @@
+{
+  "devshot-pairing": {
+    "general": {
+      "title": "DevShot-Verbindungen",
+      "description": "Sichere, bestätigungspflichtige Verbindungen zu DevShot Studio"
+    },
+    "actions": {
+      "refresh": "Aktualisieren",
+      "createInvitation": "Pairing-Code erzeugen",
+      "reject": "Ablehnen",
+      "connect": "Verbindung freigeben",
+      "approveOnce": "Einmal freigeben",
+      "revoke": "Verbindung widerrufen"
+    },
+    "cards": {
+      "invitation": "Neuer Pairing-Code",
+      "operations": "Zu bestätigende Zugriffe",
+      "pairings": "Neue Verbindungsanfragen",
+      "connections": "Bestehende Verbindungen"
+    },
+    "copy": {
+      "invitation": "Diesen einmaligen Code an den DevShot-Agenten übergeben. Er läuft nach zehn Minuten ab und wird nur als SHA-256-Hash gespeichert.",
+      "expires": "Gültig bis:",
+      "workspaceSync": "Anonymisierten Workspace synchronisieren"
+    },
+    "labels": {
+      "fingerprint": "Agent",
+      "nonce": "Einmal-Nonce",
+      "expires": "Gültig bis"
+    },
+    "empty": {
+      "operations": "Keine Zugriffsanfrage wartet auf Bestätigung.",
+      "pairings": "Keine neue Verbindungsanfrage.",
+      "connections": "Noch keine dauerhafte Verbindung."
+    },
+    "messages": {
+      "loadFailed": "Die Verbindungsdaten konnten nicht geladen werden.",
+      "invitationFailed": "Der Pairing-Code konnte nicht erzeugt werden.",
+      "decisionFailed": "Die Entscheidung konnte nicht gespeichert werden."
+    }
+  }
+}
