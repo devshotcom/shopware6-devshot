@@ -1,64 +1,55 @@
-# DevShot Connector für Shopware 6
+# DevShot Connector for Shopware 6
 
-Shopware 6 Plugin, das einen Shop in einen DevShot Studio Workspace überträgt:
+> [!CAUTION]
+> **Development environments only.** Install this plugin only in a local, disposable, or otherwise isolated development copy of a Shopware shop that contains synthetic or properly anonymized data. Never install or activate it in production, on a live storefront, or in any environment containing real customer, order, credential, or payment data. Treat the connector as a privileged export component, restrict access to the development shop, and remove the development instance when the import is complete.
 
-- anonymisiertes Datenbank-Backup als JSONL — nur Storefront-Inhalte, keine Personen- und keine Geheimnisdaten
-- Projektdateien als ZIP ohne `media`, `public/media`, `public/thumbnail`, `files/media`, `var/cache`, `var/log`, `vendor`, `node_modules`, `.git`, `.env*`, `.ssh`, `auth.json`, `credentials.json`, `.npmrc`, `.netrc` und `config/jwt`
-- dauerhaftes Ed25519-Pairing mit sichtbarem SHA-256-Fingerprint
-- separate Shopware-Admin-Freigabe mit neuem Einmal-Nonce für jeden Upload
-- Upload an die DevShot Console per internem, kurzlebigem Einmal-Token
-- Manifest mit Startkommando für den Workspace
+The DevShot Connector securely transfers an existing Shopware 6 development shop into a DevShot Studio workspace:
 
-Dieses Repository ist die einzige Quelle des Plugins. Veröffentlichte Versionen
-sind über unveränderliche Git-Tags nachvollziehbar — es gibt keine zweite Kopie
-und kein eingechecktes Build-Artefakt.
+- an anonymized JSONL database backup containing Storefront data only, without personal data or secrets;
+- a project ZIP excluding `media`, `public/media`, `public/thumbnail`, `files/media`, `var/cache`, `var/log`, `vendor`, `node_modules`, `.git`, `.env*`, `.ssh`, `auth.json`, `credentials.json`, `.npmrc`, `.netrc`, and `config/jwt`;
+- persistent Ed25519 pairing with a visible SHA-256 fingerprint;
+- a separate Shopware Administration approval with a fresh one-time nonce for every upload;
+- upload to DevShot Console with an internal, short-lived, single-import token; and
+- a workspace manifest containing the start command.
+
+This repository is the only source of the plugin. Published versions are traceable through immutable Git tags; there is no second source copy and generated build output is not committed.
 
 ## Installation
 
-Für die Entwicklung kann das Plugin direkt aus diesem Repository installiert werden:
+Before continuing, confirm that the target is an isolated development shop without production data. The connector intentionally refuses arbitrary upload destinations, but it still has access to project files and selected Shopware database tables.
+
+Install the current stable release:
 
 ```bash
-git clone https://github.com/devshotcom/shopware6-devshot.git custom/plugins/DevshotConnector
+git clone --branch v0.1.1 --depth 1 https://github.com/devshotcom/shopware6-devshot.git custom/plugins/DevshotConnector
 bin/console plugin:refresh
 bin/console plugin:install --activate -n DevshotConnector
 bin/build-administration.sh
 bin/console cache:clear -n
 ```
 
-## Sicher verbinden
+## Connect securely
 
-1. Öffne **Shopware Administration → Einstellungen → DevShot-Verbindungen**.
-2. Klicke **Pairing-Code erzeugen**. Der Code ist zehn Minuten gültig und nur einmal verwendbar.
-3. Gib dem DevShot-Agenten die öffentliche HTTPS-Adresse des Shops und den Pairing-Code. Keine Shopware-Admin-Zugangsdaten und keinen DevShot-Console-Token weitergeben.
-4. Der Agent antwortet mit einem vollständigen, anklickbaren Link wie `https://shop.example/admin#/devshot/pairing/request/<request-id>` und seinem Fingerprint.
-5. Öffne genau diesen Link, melde dich bei Bedarf in Shopware an, vergleiche den Fingerprint und klicke erst dann **Verbinden**. Das bloße Öffnen des Links erteilt keine Freigabe.
+1. Open **Shopware Administration → Settings → DevShot connections** in the development shop.
+2. Select **Create pairing code**. The code is valid for ten minutes and can be used only once.
+3. Give the DevShot agent the development shop's public HTTPS URL and the pairing code. Do not share Shopware administrator credentials or a DevShot Console token.
+4. The agent responds with a full clickable link such as `https://shop.example/admin#/devshot/pairing/request/<request-id>` and its fingerprint.
+5. Open that exact link, sign in to Shopware if necessary, compare the fingerprint, and only then select **Connect**. Opening the link does not approve the request.
 
-Der Agent erzeugt ein eigenes Ed25519-Schlüsselpaar, sendet nur den öffentlichen
-Schlüssel und liefert einen anklickbaren Deep-Link zurück. Der Link öffnet die
-authentifizierte Shopware-Administration. Dort muss der angezeigte
-SHA-256-Fingerprint mit dem Agenten übereinstimmen und die Verbindung bewusst
-freigegeben werden. Der private Schlüssel verlässt DevShot nie; der
-Pairing-Code wird im Shop nur als Hash gespeichert und nach einmaliger Nutzung
-ungültig.
+The agent creates a dedicated Ed25519 key pair and sends only the public key. The deep link opens the authenticated Shopware Administration, where the displayed SHA-256 fingerprint must match the agent output before the connection is explicitly approved. The private key never leaves DevShot. Shopware stores only a hash of the pairing code and invalidates the code after its first use.
 
-Die bestätigte Verbindung bleibt unter **Bestehende Verbindungen** sichtbar.
-Sie kann dort jederzeit widerrufen werden; danach akzeptiert das Plugin keine
-weiteren signierten Anfragen dieses Agenten. Für einen späteren Zugriff ist ein
-neues Pairing erforderlich.
+The approved connection remains visible under **Existing connections**. It can be revoked there at any time. After revocation, the plugin refuses further signed requests from that agent; reconnecting requires a new pairing code.
 
-## Workspace synchronisieren
+## Synchronize a workspace
 
-1. Der Agent fordert eine neue Synchronisation an und gibt einen zweiten vollständigen Link aus, beispielsweise `https://shop.example/admin#/devshot/pairing/operation/<operation-id>`.
-2. Der Agent zeigt zusätzlich denselben Fingerprint und einen neuen 256-Bit-Freigabe-Nonce an.
-3. Öffne den Link und vergleiche Fingerprint und Nonce mit der Ausgabe des Agenten.
-4. Klicke **Einmal freigeben**. Erst jetzt beginnt der Upload. Jede Freigabe ist zehn Minuten gültig und gilt genau einmal.
+1. The agent requests a new synchronization and prints a second full link such as `https://shop.example/admin#/devshot/pairing/operation/<operation-id>`.
+2. The agent also displays the same fingerprint and a fresh 256-bit approval nonce.
+3. Open the link and compare both the fingerprint and nonce with the agent output.
+4. Select **Approve once**. The upload starts only after this action. The approval expires after ten minutes and can be consumed exactly once.
 
-Eine dauerhafte Verbindung überspringt diese Freigabe nicht. Für jede
-Synchronisation erzeugt das Plugin einen neuen 256-Bit-Nonce. Der Deep-Link
-öffnet nur die konkrete Anfrage; er bestätigt sie nicht. Eine Wiederholung mit
-demselben Nonce oder derselben Freigabe wird mit HTTP 409 abgewiesen.
+A persistent connection never bypasses this approval. The deep link opens only the specific pending request; it does not approve it. Reusing the same operation or nonce is rejected with HTTP 409.
 
-Typische Agent-Ausgabe:
+Typical agent output:
 
 ```text
 Shopware requires a fresh one-time approval for this workspace sync.
@@ -67,28 +58,20 @@ Agent fingerprint: <fingerprint>
 Approval nonce: <one-time-nonce>
 ```
 
-Jeder signierte Aufruf bindet HTTP-Methode, Pfad, SHA-256-Body-Hash,
-Zeitstempel und Transport-Nonce in eine Ed25519-Signatur ein. Zusätzlich schützt
-die verpflichtende HTTPS-Verbindung den Transport. Der Workspace erhält weiterhin nur anonymisierte
-Datenbankwerte und Projektdateien ohne Media. Das interne Upload-Token ist an
-genau einen Import gebunden und läuft ab; Shopware benötigt keine Zugangsdaten
-zur DevShot Console.
+Every signed request binds the HTTP method, path, SHA-256 body digest, timestamp, and transport nonce into an Ed25519 signature. HTTPS protects the transport. The workspace receives only anonymized database values and project files without media. The internal upload token is bound to one import and expires; Shopware never needs DevShot Console credentials.
 
-Die Admin-Erweiterung muss nach Installation oder Update mit dem üblichen
-Shopware-Administration-Build gebaut und anschließend der Cache geleert werden.
+After installing or updating the plugin, rebuild the Shopware Administration and clear the cache:
 
 ```bash
 bin/build-administration.sh
 bin/console cache:clear -n
 ```
 
-`POST /api/ai/shopware/imports` ist ausschließlich der intern authentifizierte
-Agent-Endpunkt. Ein direkter Aufruf aus Shopware oder dem Browser wird deshalb
-absichtlich abgewiesen.
+`POST /api/ai/shopware/imports` is an internally authenticated agent endpoint. Direct requests from Shopware or a browser are intentionally rejected.
 
-## Agent- und Operator-Referenz
+## Agent and operator reference
 
-Der in DevShot-Workspaces installierte Helfer bietet folgende Befehle:
+DevShot Shopware workspaces include these helper commands:
 
 ```text
 devshot-shopware-import pair <https-shop-url> <pairing-code>
@@ -98,26 +81,57 @@ devshot-shopware-import apply [import-id]
 devshot-shopware-import --help
 ```
 
-`pair` und `prepare` warten jeweils bis zu zehn Minuten auf die Entscheidung in
-Shopware. `status` und `apply` verwenden ohne explizite ID den zuletzt
-vorbereiteten Import. Das vollständige Protokoll, die DevShot-Komponenten und
-Fehlerbehandlung sind in der
-[DevShot Connector-Dokumentation](https://github.com/devshotcom/devshot/blob/main/docs/shopware-connector.md)
-beschrieben.
+`pair` and `prepare` each wait up to ten minutes for a decision in Shopware. Without an explicit ID, `status` and `apply` use the most recently prepared import. The complete protocol, DevShot components, recovery behavior, and failure handling are documented in the [DevShot Connector documentation](https://github.com/devshotcom/devshot/blob/main/docs/shopware-connector.md).
 
-## Fehlerbehebung
+## Security properties
 
-- **401 von `/api/ai/shopware/imports`:** Das ist bei direkten Browser- oder Plugin-Aufrufen korrekt. Nur der authentifizierte DevShot-Agent darf diesen internen Endpunkt verwenden.
-- **Pairing oder Freigabe abgelaufen:** Neuen Pairing-Code erzeugen beziehungsweise die Synchronisation erneut anfordern. Alte IDs oder Nonces nicht wiederverwenden.
-- **HTTP 409 `shopware_operation_approval_required`:** Die Freigabe fehlt, wurde abgelehnt, ist abgelaufen oder wurde bereits verbraucht. Eine neue Synchronisationsanfrage erzeugen.
-- **Fingerprint oder Nonce unterscheiden sich:** Nicht freigeben. Anfrage ablehnen und neu starten.
-- **Zugriff dauerhaft beenden:** Unter **Bestehende Verbindungen** auf **Widerrufen** klicken.
+- Ed25519 proof of possession and request signatures.
+- SHA-256 fingerprints displayed by both the agent and Shopware.
+- A 256-bit, single-use pairing code stored only as a hash.
+- A fresh 256-bit administrator approval nonce for every synchronization.
+- Signed timestamp and transport nonce verification with replay rejection.
+- Atomic `approved` to `consumed` transition before an upload starts.
+- Public HTTPS source URLs with private-network and redirect protection.
+- A pinned DevShot HTTPS upload endpoint; arbitrary destinations are rejected.
+- Private temporary export directories that are recursively removed after success or failure.
 
-## Technische Einstiegspunkte
+These are concrete protocol guarantees. They are not a claim of hardware-backed key storage, FIPS certification, or a particular military certification profile. The safeguards do not make production installation appropriate.
 
-- `src/Service/PairingService.php` — Pairing-, Freigabe-, Verbrauchs- und Widerrufsstatus
-- `src/Security/PairingProtocol.php` — Prüfung kanonischer Ed25519-Signaturen
-- `src/Controller/PairingPublicController.php` — signierte öffentliche Pairing- und Sync-Routen
-- `src/Controller/PairingAdminController.php` — authentifizierte Admin-Entscheidungen
-- `src/Resources/app/administration/src/module/devshot-pairing/` — Shopware-Admin-Oberfläche
-- `src/Service/TemporaryWorkspace.php` — private temporäre Exporte und garantierte Bereinigung
+## Cleanup after an import
+
+1. Revoke the agent under **Existing connections**.
+2. Deactivate and uninstall `DevshotConnector` from the development shop.
+3. Delete the disposable development instance and its database when they are no longer needed.
+4. Do not promote the development database, plugin state, pairing records, or exported artifacts into production.
+
+## Troubleshooting
+
+- **HTTP 401 from `/api/ai/shopware/imports`:** Expected for direct browser or plugin requests. Only the authenticated DevShot agent can use this internal endpoint.
+- **Pairing or approval expired:** Create a new pairing code or request a new synchronization. Do not reuse old request IDs or nonces.
+- **HTTP 409 `shopware_operation_approval_required`:** The request is pending, rejected, expired, or already consumed. Generate and approve a new synchronization request.
+- **Fingerprint or nonce differs:** Do not approve the request. Reject it and start a new one.
+- **End access permanently:** Select **Revoke** under **Existing connections**.
+
+## Technical entry points
+
+- `src/Service/PairingService.php` — pairing, approval, consumption, replay protection, and revocation state machine.
+- `src/Security/PairingProtocol.php` — canonical Ed25519 request verification.
+- `src/Controller/PairingPublicController.php` — signed public pairing, operation, and synchronization routes.
+- `src/Controller/PairingAdminController.php` — authenticated Shopware Administration decisions.
+- `src/Resources/app/administration/src/module/devshot-pairing/` — pairing, approval, and connection-management UI.
+- `src/Service/TemporaryWorkspace.php` — private temporary exports and guaranteed cleanup.
+
+## Development and validation
+
+Run the local protocol and export tests:
+
+```bash
+composer test
+```
+
+Build and validate with the official Shopware CLI before publishing a release:
+
+```bash
+shopware-cli extension validate . --full --format summary
+shopware-cli extension build .
+```

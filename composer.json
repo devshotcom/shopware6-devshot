@@ -1,7 +1,7 @@
 {
   "name": "devshot/shopware6-devshot",
-  "description": "DevShot Workspace Connector für anonymisierte Shopware Wartung.",
-  "version": "0.1.0",
+  "description": "Secure DevShot workspace connector for anonymized Shopware maintenance.",
+  "version": "0.1.1",
   "type": "shopware-platform-plugin",
   "license": "proprietary",
   "authors": [
